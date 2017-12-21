@@ -1,23 +1,37 @@
 package pl.moonwolf.blocks;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import pl.moonwolf.blocks.screens.MainScreen;
 
 public class Blocks extends Game
 {
 	private SpriteBatch batch;
+    private Viewport viewport;
+    private Camera camera;
 
-	@Override
+    @Override
 	public void create ()
     {
+        camera = new OrthographicCamera();
+		viewport = new ExtendViewport(800, 600, camera);
+        viewport.getCamera().position.set(
+                viewport.getCamera().position.x + 800*0.5f,
+                viewport.getCamera().position.y + 600*0.5f,
+                0);
+        camera.update();
+        viewport.update(800, 600);
+        camera.update();
 		batch = new SpriteBatch();
-		setScreen(new MainScreen(batch));
+		setScreen(new MainScreen(batch, viewport));
 	}
 
 	@Override

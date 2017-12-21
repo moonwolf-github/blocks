@@ -7,6 +7,8 @@ import pl.moonwolf.blocks.Blocks;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.height = 600;
+		config.width = 800;
 		new LwjglApplication(new Blocks(), config);
 	}
 }
