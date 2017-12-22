@@ -33,8 +33,7 @@ public class RenderSystem extends IteratingSystem
         TextureComponent tex = texture.get(entity);
         PositionComponent pos = position.get(entity);
         batch.begin();
-        batch.setProjectionMatrix(camera.combined);
-        batch.draw(tex.texture, pos.pos.x, pos.pos.y);
+        batch.draw(tex.texture, pos.pos.x, pos.pos.y, tex.width, tex.width);
         batch.end();
     }
 }

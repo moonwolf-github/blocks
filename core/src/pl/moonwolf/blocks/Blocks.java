@@ -23,13 +23,6 @@ public class Blocks extends Game
     {
         camera = new OrthographicCamera();
 		viewport = new ExtendViewport(800, 600, camera);
-        viewport.getCamera().position.set(
-                viewport.getCamera().position.x + 800*0.5f,
-                viewport.getCamera().position.y + 600*0.5f,
-                0);
-        camera.update();
-        viewport.update(800, 600);
-        camera.update();
 		batch = new SpriteBatch();
 		setScreen(new MainScreen(batch, viewport));
 	}
