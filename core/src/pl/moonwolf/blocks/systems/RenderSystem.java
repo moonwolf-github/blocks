@@ -26,14 +26,21 @@ public class RenderSystem extends IteratingSystem
         texture = ComponentMapper.getFor(TextureComponent.class);
         position = ComponentMapper.getFor(PositionComponent.class);
     }
+
+    @Override
+    public void update(float deltaTime)
+    {
+        camera.update();
+        batch.begin();
+        super.update(deltaTime);
+        batch.end();
+    }
+
     @Override
     protected void processEntity(Entity entity, float deltaTime)
     {
-        camera.update();
         TextureComponent tex = texture.get(entity);
         PositionComponent pos = position.get(entity);
-        batch.begin();
         batch.draw(tex.texture, pos.pos.x, pos.pos.y, tex.width, tex.width);
-        batch.end();
     }
 }
