@@ -88,9 +88,6 @@ public class MainScreen extends ScreenAdapter
         // Create our body in the world using our body definition
         bc.body = world.createBody(bodyDef);
 
-        // move object, force needs to be > 1
-        bc.body.applyLinearImpulse(0f, 1.01f, 0f, 0f, true);
-
         // Create a circle shape and set its radius to 6
         CircleShape circle = new CircleShape();
         circle.setRadius(tc.width / 2f);
@@ -98,7 +95,7 @@ public class MainScreen extends ScreenAdapter
         // Create a fixture definition to apply our shape to
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
-        fixtureDef.density = 20f;
+        fixtureDef.density = 1f;
         fixtureDef.friction = 0.0f;
         fixtureDef.restitution = 1.0f; // perfectly elastic collision
 
