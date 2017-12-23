@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 
 import pl.moonwolf.blocks.components.BodyComponent;
@@ -16,6 +17,7 @@ public class InputResponeSystem extends IteratingSystem implements InputHandler
     private float vX;
     private float vY;
     private ComponentMapper<BodyComponent> bm = ComponentMapper.getFor(BodyComponent.class);
+    Vector2 linearVelocity;
 
     public InputResponeSystem()
     {
@@ -40,7 +42,7 @@ public class InputResponeSystem extends IteratingSystem implements InputHandler
             if (!body.body.isAwake() && body.body.getType() == BodyDef.BodyType.DynamicBody)
             {
                 // move object, force needs to be > 1
-                body.body.applyLinearImpulse(0f, 1.01f, 0f, 0f, true);
+                body.body.applyLinearImpulse(linearVelocity, new Vector2(0f, 0f), true);
             }
         }
     }
@@ -50,5 +52,7 @@ public class InputResponeSystem extends IteratingSystem implements InputHandler
     {
         this.vX = vX;
         this.vY = vY;
+        linearVelocity = new Vector2(vX, -vY).nor();
+        Gdx.app.log("InputResponse", "lv: " + linearVelocity);
     }
 }
