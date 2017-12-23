@@ -2,10 +2,12 @@ package pl.moonwolf.blocks.screens;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -14,10 +16,12 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import pl.moonwolf.blocks.input.GestureListener;
 import pl.moonwolf.blocks.components.BodyComponent;
 import pl.moonwolf.blocks.components.PositionComponent;
 import pl.moonwolf.blocks.components.TextureComponent;
 import pl.moonwolf.blocks.systems.Box2dSystem;
+import pl.moonwolf.blocks.systems.InputResponeSystem;
 import pl.moonwolf.blocks.systems.RenderSystem;
 
 public class MainScreen extends ScreenAdapter
@@ -128,6 +132,9 @@ public class MainScreen extends ScreenAdapter
         block = engine.createEntity();
         block.add(new PositionComponent()).add(bc);
         engine.addEntity(block);
+        InputResponeSystem irs = new InputResponeSystem();
+        Gdx.input.setInputProcessor(new GestureDetector(new GestureListener(irs)));
+        engine.addSystem(irs);
     }
 
     @Override
