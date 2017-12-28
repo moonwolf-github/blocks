@@ -2,12 +2,10 @@ package pl.moonwolf.blocks;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import pl.moonwolf.blocks.screens.MainScreen;
@@ -16,14 +14,16 @@ public class Blocks extends Game
 {
 	private SpriteBatch batch;
     private Viewport viewport;
-    private Camera camera;
+	public static final float VIRTUAL_HEIGHT = 10;
+    public static final float VIRTUAL_WIDTH = 10;
 
     @Override
 	public void create ()
     {
-        camera = new OrthographicCamera();
-		viewport = new ExtendViewport(800, 600, camera);
+		viewport = new ExtendViewport(800, 600);
+		((OrthographicCamera) this.viewport.getCamera()).setToOrtho(false, Blocks.VIRTUAL_WIDTH, Blocks.VIRTUAL_HEIGHT);
 		batch = new SpriteBatch();
+        batch.setProjectionMatrix(((OrthographicCamera) this.viewport.getCamera()).combined);
 		setScreen(new MainScreen(batch, viewport));
 	}
 
