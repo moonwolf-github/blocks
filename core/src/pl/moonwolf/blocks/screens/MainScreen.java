@@ -57,7 +57,7 @@ public class MainScreen extends ScreenAdapter
         engine = new PooledEngine();
         engine.addSystem(new RenderSystem(batch, viewport.getCamera()));
         world = new World(new Vector2(0f, 0f), true);
-        world.setVelocityThreshold(0f);
+        World.setVelocityThreshold(0f);
         engine.addSystem(new Box2dSystem(world));
         float x = 0;
         float y = 0;
@@ -129,7 +129,7 @@ public class MainScreen extends ScreenAdapter
         bc.body = world.createBody(bodyDef);
         bc.body.createFixture(fixtureDef);
         block = engine.createEntity();
-        block.add(new PositionComponent()).add(bc).add(new MultiTexturesComponent(new Texture("hedge.png"), 1f, (int) VIRTUAL_HEIGHT));;
+        block.add(new PositionComponent()).add(bc).add(new MultiTexturesComponent(new Texture("hedge.png"), 1f, (int) VIRTUAL_HEIGHT));
         engine.addEntity(block);
         InputResponeSystem irs = new InputResponeSystem();
         Gdx.input.setInputProcessor(new GestureDetector(new GestureListener(irs)));
