@@ -42,7 +42,7 @@ public class InputResponeSystem extends IteratingSystem implements InputHandler
             if (!body.body.isAwake() && body.body.getType() == BodyDef.BodyType.DynamicBody)
             {
                 // move object, force needs to be > 1
-                body.body.applyLinearImpulse(linearVelocity, new Vector2(0f, 0f), true);
+                body.body.applyLinearImpulse(linearVelocity, body.body.getLocalCenter(), true);
             }
         }
     }
