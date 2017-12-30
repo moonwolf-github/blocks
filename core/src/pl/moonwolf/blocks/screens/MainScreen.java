@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import pl.moonwolf.blocks.Blocks;
 import pl.moonwolf.blocks.components.MultiTexturesComponent;
+import pl.moonwolf.blocks.components.PlayerComponent;
 import pl.moonwolf.blocks.input.GestureListener;
 import pl.moonwolf.blocks.components.BodyComponent;
 import pl.moonwolf.blocks.components.PositionComponent;
@@ -74,6 +75,7 @@ public class MainScreen extends ScreenAdapter
         Entity block = engine.createEntity();
         block.add(tc);
         block.add(new PositionComponent());
+        block.add(new PlayerComponent());
         BodyComponent bc = new BodyComponent();
         BodyDef bodyDef = new BodyDef();
         // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody

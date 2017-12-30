@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 
 import pl.moonwolf.blocks.components.BodyComponent;
+import pl.moonwolf.blocks.components.PlayerComponent;
 import pl.moonwolf.blocks.input.InputHandler;
 import pl.moonwolf.blocks.components.PositionComponent;
 
@@ -21,7 +22,7 @@ public class InputResponeSystem extends IteratingSystem implements InputHandler
 
     public InputResponeSystem()
     {
-        super(Family.all(PositionComponent.class, BodyComponent.class).get());
+        super(Family.all(PositionComponent.class, BodyComponent.class, PlayerComponent.class).get());
     }
 
     @Override
@@ -39,7 +40,7 @@ public class InputResponeSystem extends IteratingSystem implements InputHandler
         {
             Gdx.app.log("InputResponse", "vY < 0");
             BodyComponent body = bm.get(entity);
-            if (!body.body.isAwake() && body.body.getType() == BodyDef.BodyType.DynamicBody)
+            if (!body.body.isAwake())
             {
                 // move object, force needs to be > 1
                 body.body.applyLinearImpulse(linearVelocity, body.body.getLocalCenter(), true);
