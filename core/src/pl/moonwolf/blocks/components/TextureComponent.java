@@ -6,5 +6,5 @@ import com.badlogic.gdx.graphics.Texture;
 public class TextureComponent implements Component
 {
     public Texture texture = null;
-    public float width = 0;
+    public float size = 0;
 }

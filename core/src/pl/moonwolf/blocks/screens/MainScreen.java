@@ -49,10 +49,10 @@ public class MainScreen extends ScreenAdapter
         this.viewport = viewport;
         tc = new TextureComponent();
         tc.texture = new Texture("stone.png");
-        tc.width = tc.texture.getWidth() / 64f; // 64 pixels is 1 meter
+        tc.size = tc.texture.getWidth() / 64f; // 64 pixels is 1 meter
         floor = new TextureComponent();
         floor.texture = new Texture("floor.png");
-        floor.width = floor.texture.getWidth() / 64f;
+        floor.size = floor.texture.getWidth() / 64f;
         engine = new PooledEngine();
         engine.addSystem(new RenderSystem(batch, viewport.getCamera()));
         world = new World(new Vector2(0f, 0f), true);
@@ -67,10 +67,10 @@ public class MainScreen extends ScreenAdapter
                 PositionComponent pc = new PositionComponent();
                 pc.pos = new Vector2(x, y);
                 engine.addEntity(engine.createEntity().add(floor).add(pc));
-                x += floor.width;
+                x += floor.size;
             }
             x = 0;
-            y += floor.width;
+            y += floor.size;
         }
         Entity block = engine.createEntity();
         block.add(tc);
@@ -92,7 +92,7 @@ public class MainScreen extends ScreenAdapter
 
         // Create a circle shape and set its radius to 6
         CircleShape circle = new CircleShape();
-        circle.setRadius(tc.width / 2f);
+        circle.setRadius(tc.size / 2f);
 
         // Create a fixture definition to apply our shape to
         FixtureDef fixtureDef = new FixtureDef();

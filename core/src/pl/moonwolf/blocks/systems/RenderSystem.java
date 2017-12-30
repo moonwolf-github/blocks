@@ -47,7 +47,7 @@ public class RenderSystem extends IteratingSystem
         PositionComponent pos = position.get(entity);
         if (tex != null)
         {
-            batch.draw(tex.texture, pos.pos.x, pos.pos.y, tex.width, tex.width);
+            batch.draw(tex.texture, pos.pos.x, pos.pos.y, tex.size, tex.size);
         }
         else
         {
