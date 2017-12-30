@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector;
@@ -23,6 +22,7 @@ import pl.moonwolf.blocks.input.GestureListener;
 import pl.moonwolf.blocks.components.BodyComponent;
 import pl.moonwolf.blocks.components.PositionComponent;
 import pl.moonwolf.blocks.components.TextureComponent;
+import pl.moonwolf.blocks.systems.Box2dDebugSystem;
 import pl.moonwolf.blocks.systems.Box2dSystem;
 import pl.moonwolf.blocks.systems.InputResponeSystem;
 import pl.moonwolf.blocks.systems.RenderSystem;
@@ -97,7 +97,7 @@ public class MainScreen extends ScreenAdapter
         // Create a fixture definition to apply our shape to
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
-        fixtureDef.density = 1f;
+        fixtureDef.density = 5f;
         fixtureDef.friction = 0.0f;
         fixtureDef.restitution = 1.0f; // perfectly elastic collision
 
@@ -157,6 +157,8 @@ public class MainScreen extends ScreenAdapter
         InputResponeSystem irs = new InputResponeSystem();
         Gdx.input.setInputProcessor(new GestureDetector(new GestureListener(irs)));
         engine.addSystem(irs);
+
+        engine.addSystem(new Box2dDebugSystem(world, viewport.getCamera()));
     }
 
     @Override
