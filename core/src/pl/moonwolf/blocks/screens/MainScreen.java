@@ -80,7 +80,7 @@ public class MainScreen extends ScreenAdapter
         bodyDef.type = BodyDef.BodyType.DynamicBody;
 
         // Set our body's starting position in the world
-        bodyDef.position.set(0f, 0.2f);
+        bodyDef.position.set(0.2f, 0.2f);
 
         bodyDef.angularDamping = 0f;
         bodyDef.linearDamping = 0f;
@@ -118,7 +118,7 @@ public class MainScreen extends ScreenAdapter
         bc.body = world.createBody(bodyDef);
         bc.body.createFixture(fixtureDef);
         block = engine.createEntity();
-        block.add(new PositionComponent()).add(bc).add(new MultiTexturesComponent(new Texture("hedge.png"), 27f/64f, (int) (Blocks.VIRTUAL_WIDTH / (27f/64f)) + 1));
+        block.add(new PositionComponent()).add(bc).add(new MultiTexturesComponent(new Texture("hedge.png"), 27f/64f, (int) (Blocks.VIRTUAL_WIDTH / (27f/64f)) + 1, true));
         engine.addEntity(block);
 
         // bottom barrier
@@ -127,8 +127,31 @@ public class MainScreen extends ScreenAdapter
         bc.body = world.createBody(bodyDef);
         bc.body.createFixture(fixtureDef);
         block = engine.createEntity();
-        block.add(new PositionComponent()).add(bc).add(new MultiTexturesComponent(new Texture("hedge.png"), 27f/64f, (int) (Blocks.VIRTUAL_WIDTH / (27f/64f)) + 1));
+        block.add(new PositionComponent()).add(bc).add(new MultiTexturesComponent(new Texture("hedge.png"), 27f/64f, (int) (Blocks.VIRTUAL_WIDTH / (27f/64f)) + 1, true));
         engine.addEntity(block);
+
+        // left barrier
+        bc = new BodyComponent();
+        bodyDef.position.set(0f, 0f);
+        bc.body = world.createBody(bodyDef);
+        border.set(0, 0, 0, Blocks.VIRTUAL_WIDTH / 2);
+        fixtureDef.shape = border;
+        bc.body.createFixture(fixtureDef);
+        block = engine.createEntity();
+        block.add(new PositionComponent()).add(bc).add(new MultiTexturesComponent(new Texture("hedge.png"), 27f/64f, (int) ((Blocks.VIRTUAL_WIDTH / 2) / (27f/64f)) + 1, false));
+        engine.addEntity(block);
+
+        // rigth barrier
+        bc = new BodyComponent();
+        bodyDef.position.set(Blocks.VIRTUAL_WIDTH - 27f/64f, 0f);
+        bc.body = world.createBody(bodyDef);
+        border.set(0, 0, 0, Blocks.VIRTUAL_WIDTH / 2);
+        fixtureDef.shape = border;
+        bc.body.createFixture(fixtureDef);
+        block = engine.createEntity();
+        block.add(new PositionComponent()).add(bc).add(new MultiTexturesComponent(new Texture("hedge.png"), 27f/64f, (int) ((Blocks.VIRTUAL_WIDTH / 2) / (27f/64f)) + 1, false));
+        engine.addEntity(block);
+
         InputResponeSystem irs = new InputResponeSystem();
         Gdx.input.setInputProcessor(new GestureDetector(new GestureListener(irs)));
         engine.addSystem(irs);
