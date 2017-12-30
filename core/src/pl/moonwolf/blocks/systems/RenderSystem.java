@@ -51,9 +51,19 @@ public class RenderSystem extends IteratingSystem
         }
         else
         {
-            for (int i = 0; i < mtex.count; i++)
+            if (mtex.horizontal)
             {
-                batch.draw(mtex.texture, pos.pos.x + mtex.size * i, pos.pos.y, mtex.size, mtex.size);
+                for (int i = 0; i < mtex.count; i++)
+                {
+                    batch.draw(mtex.texture, pos.pos.x + mtex.size * i, pos.pos.y, mtex.size, mtex.size);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < mtex.count; i++)
+                {
+                    batch.draw(mtex.texture, pos.pos.x, pos.pos.y + mtex.size * i, mtex.size, mtex.size);
+                }
             }
         }
     }
