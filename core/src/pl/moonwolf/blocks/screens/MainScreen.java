@@ -60,9 +60,9 @@ public class MainScreen extends ScreenAdapter
         engine.addSystem(new Box2dSystem(world));
         float x = 0;
         float y = 0;
-        while (y < Blocks.VIRTUAL_HEIGHT)
+        while (y < Blocks.VIRTUAL_HEIGHT + 1)
         {
-            while (x < Blocks.VIRTUAL_WIDTH)
+            while (x < Blocks.VIRTUAL_WIDTH + 1)
             {
                 PositionComponent pc = new PositionComponent();
                 pc.pos = new Vector2(x, y);
