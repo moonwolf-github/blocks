@@ -92,7 +92,7 @@ public class MainScreen extends ScreenAdapter
 
         // Create a circle shape and set its radius to 6
         CircleShape circle = new CircleShape();
-        circle.setRadius(tc.size / 2f);
+        circle.setRadius(25 / 64f);
 
         // Create a fixture definition to apply our shape to
         FixtureDef fixtureDef = new FixtureDef();
