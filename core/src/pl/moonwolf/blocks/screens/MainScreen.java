@@ -82,7 +82,7 @@ public class MainScreen extends ScreenAdapter
         bodyDef.type = BodyDef.BodyType.DynamicBody;
 
         // Set our body's starting position in the world
-        bodyDef.position.set(0.2f, 0.2f);
+        bodyDef.position.set(0.5f, 0.5f);
 
         bodyDef.angularDamping = 0f;
         bodyDef.linearDamping = 0f;
@@ -127,6 +127,7 @@ public class MainScreen extends ScreenAdapter
         bc = new BodyComponent();
         bodyDef.position.set(0f, 0f);
         bc.body = world.createBody(bodyDef);
+        border.set(0, 27/64f, Blocks.VIRTUAL_WIDTH, 27/64f);
         bc.body.createFixture(fixtureDef);
         block = engine.createEntity();
         block.add(new PositionComponent()).add(bc).add(new MultiTexturesComponent(new Texture("hedge.png"), 27f/64f, (int) (Blocks.VIRTUAL_WIDTH / (27f/64f)) + 1, true));
@@ -136,7 +137,7 @@ public class MainScreen extends ScreenAdapter
         bc = new BodyComponent();
         bodyDef.position.set(0f, 0f);
         bc.body = world.createBody(bodyDef);
-        border.set(0, 0, 0, Blocks.VIRTUAL_WIDTH / 2);
+        border.set(27/64f, 0, 27/64f, Blocks.VIRTUAL_WIDTH / 2);
         fixtureDef.shape = border;
         bc.body.createFixture(fixtureDef);
         block = engine.createEntity();
