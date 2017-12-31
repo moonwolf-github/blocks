@@ -43,7 +43,7 @@ public class InputResponeSystem extends IteratingSystem implements InputHandler
             if (!body.body.isAwake())
             {
                 // move object, force needs to be > 1
-                body.body.applyLinearImpulse(linearVelocity, body.body.getLocalCenter(), true);
+                body.body.applyLinearImpulse(linearVelocity, body.body.getWorldCenter(), true);
             }
         }
     }
