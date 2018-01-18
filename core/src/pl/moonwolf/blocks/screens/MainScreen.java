@@ -74,6 +74,7 @@ public class MainScreen extends ScreenAdapter
             y += floor.size;
         }
         createPlayer(0.5f);
+        createPlayer(7.5f);
 
         // upper barrier
         createBarrier(0f, Blocks.VIRTUAL_HEIGHT - 27/64f,0, 0, Blocks.VIRTUAL_WIDTH,0, true, true);
