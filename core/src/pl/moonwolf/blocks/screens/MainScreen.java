@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -42,6 +43,7 @@ public class MainScreen extends ScreenAdapter
     private TextureComponent tc;
     private TextureComponent floor;
     private Sound blipSound;
+    private Music backgroundMusic;
 
     @Override
     public void resize(int width, int height)
@@ -54,6 +56,10 @@ public class MainScreen extends ScreenAdapter
     {
         this.batch = batch;
         this.viewport = viewport;
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/music.mp3"));
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(0.4f);
+        backgroundMusic.play();
         blipSound = Gdx.audio.newSound(Gdx.files.internal("sounds/blip.wav"));
         tc = new TextureComponent();
         tc.texture = new Texture("stone.png");
@@ -205,5 +211,7 @@ public class MainScreen extends ScreenAdapter
         tc.texture.dispose();
         floor.texture.dispose();
         world.dispose();
+        backgroundMusic.dispose();
+        blipSound.dispose();
     }
 }
