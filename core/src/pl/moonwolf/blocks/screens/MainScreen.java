@@ -111,55 +111,42 @@ public class MainScreen extends ScreenAdapter
         engine.addEntity(block);
 
         // upper barrier
-        bc = new BodyComponent();
-        bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(0f, Blocks.VIRTUAL_HEIGHT / 2f);
-        EdgeShape border = new EdgeShape();
-        border.set(0, 0, Blocks.VIRTUAL_WIDTH,0);
-        fixtureDef.shape = border;
-        bc.body = world.createBody(bodyDef);
-        bc.body.createFixture(fixtureDef);
-        block = engine.createEntity();
-        block.add(new PositionComponent()).add(bc).add(new MultiTexturesComponent(new Texture("hedge.png"), 27f/64f, (int) (Blocks.VIRTUAL_WIDTH / (27f/64f)) + 1, true));
-        engine.addEntity(block);
-
+        createBarrier(0f, Blocks.VIRTUAL_HEIGHT / 2f,0, 0, Blocks.VIRTUAL_WIDTH,0, true);
         // bottom barrier
-        bc = new BodyComponent();
-        bodyDef.position.set(0f, 0f);
-        bc.body = world.createBody(bodyDef);
-        border.set(0, 27/64f, Blocks.VIRTUAL_WIDTH, 27/64f);
-        bc.body.createFixture(fixtureDef);
-        block = engine.createEntity();
-        block.add(new PositionComponent()).add(bc).add(new MultiTexturesComponent(new Texture("hedge.png"), 27f/64f, (int) (Blocks.VIRTUAL_WIDTH / (27f/64f)) + 1, true));
-        engine.addEntity(block);
-
+        createBarrier(0, 0, 0, 27/64f, Blocks.VIRTUAL_WIDTH, 27/64f, true);
         // left barrier
-        bc = new BodyComponent();
-        bodyDef.position.set(0f, 0f);
-        bc.body = world.createBody(bodyDef);
-        border.set(27/64f, 0, 27/64f, Blocks.VIRTUAL_WIDTH / 2);
-        fixtureDef.shape = border;
-        bc.body.createFixture(fixtureDef);
-        block = engine.createEntity();
-        block.add(new PositionComponent()).add(bc).add(new MultiTexturesComponent(new Texture("hedge.png"), 27f/64f, (int) ((Blocks.VIRTUAL_WIDTH / 2) / (27f/64f)) + 1, false));
-        engine.addEntity(block);
-
+        createBarrier(0, 0, 27/64f, 0, 27/64f, Blocks.VIRTUAL_WIDTH / 2, false);
         // rigth barrier
-        bc = new BodyComponent();
-        bodyDef.position.set(Blocks.VIRTUAL_WIDTH - 27f/64f, 0f);
-        bc.body = world.createBody(bodyDef);
-        border.set(0, 0, 0, Blocks.VIRTUAL_WIDTH / 2);
-        fixtureDef.shape = border;
-        bc.body.createFixture(fixtureDef);
-        block = engine.createEntity();
-        block.add(new PositionComponent()).add(bc).add(new MultiTexturesComponent(new Texture("hedge.png"), 27f/64f, (int) ((Blocks.VIRTUAL_WIDTH / 2) / (27f/64f)) + 1, false));
-        engine.addEntity(block);
+        createBarrier(Blocks.VIRTUAL_WIDTH - 27f/64f, 0f, 0, 0, 0, Blocks.VIRTUAL_WIDTH / 2, false);
 
         InputResponeSystem irs = new InputResponeSystem();
         Gdx.input.setInputProcessor(new GestureDetector(new GestureListener(irs)));
         engine.addSystem(irs);
 
         engine.addSystem(new Box2dDebugSystem(world, viewport.getCamera()));
+    }
+
+    private void createBarrier(float x, float y, float x1, float y1, float x2, float y2, boolean horizontal)
+    {
+        BodyDef bodyDef = new BodyDef();
+        BodyComponent bc = new BodyComponent();
+        EdgeShape border = new EdgeShape();
+        // Create a fixture definition to apply our shape to
+        FixtureDef fixtureDef = new FixtureDef();
+        Entity entity = engine.createEntity();
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+        bodyDef.position.set(x, y);
+        bc.body = world.createBody(bodyDef);
+        border.set(x1, y1, x2, y2);
+        fixtureDef.shape = border;
+        bc.body.createFixture(fixtureDef);
+        float length = x2 - x1;
+        if (!horizontal)
+        {
+            length = y2 - y1;
+        }
+        entity.add(new PositionComponent()).add(bc).add(new MultiTexturesComponent(new Texture("hedge.png"), 27f/64f, (int) (length / (27f/64f)) + 1, horizontal));
+        engine.addEntity(entity);
     }
 
     @Override
