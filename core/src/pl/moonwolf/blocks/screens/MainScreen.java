@@ -73,6 +73,29 @@ public class MainScreen extends ScreenAdapter
             x = 0;
             y += floor.size;
         }
+        createPlayer(0.5f);
+
+        // upper barrier
+        createBarrier(0f, Blocks.VIRTUAL_HEIGHT - 27/64f,0, 0, Blocks.VIRTUAL_WIDTH,0, true, true);
+        // bottom barrier
+        createBarrier(0, 0, 0, 27/64f, Blocks.VIRTUAL_WIDTH, 27/64f, true, true);
+        // left barrier
+        createBarrier(0, 0, 27/64f, 0, 27/64f, Blocks.VIRTUAL_WIDTH, false, true);
+        // rigth barrier
+        createBarrier(Blocks.VIRTUAL_WIDTH - 27f/64f, 0f, 0, 0, 0, Blocks.VIRTUAL_WIDTH, false, true);
+        // middle barrier
+        createBarrier(Blocks.VIRTUAL_WIDTH / 2f - 27f/64f/2, 0f, 0, 0, 0, Blocks.VIRTUAL_WIDTH, false, true);
+        createBarrier(Blocks.VIRTUAL_WIDTH / 2f + 27f/64f/2, 0f, 0, 0, 0, Blocks.VIRTUAL_WIDTH, false, false);
+
+        InputResponeSystem irs = new InputResponeSystem(viewport);
+        Gdx.input.setInputProcessor(new GestureDetector(new GestureListener(irs)));
+        engine.addSystem(irs);
+
+        engine.addSystem(new Box2dDebugSystem(world, viewport.getCamera()));
+    }
+
+    private void createPlayer(float x)
+    {
         Entity block = engine.createEntity();
         block.add(tc);
         block.add(new PositionComponent());
@@ -83,7 +106,7 @@ public class MainScreen extends ScreenAdapter
         bodyDef.type = BodyDef.BodyType.DynamicBody;
 
         // Set our body's starting position in the world
-        bodyDef.position.set(0.5f, 0.5f);
+        bodyDef.position.set(x, 0.5f);
 
         bodyDef.angularDamping = 0f;
         bodyDef.linearDamping = 0f;
@@ -110,24 +133,6 @@ public class MainScreen extends ScreenAdapter
         circle.dispose();
         block.add(bc);
         engine.addEntity(block);
-
-        // upper barrier
-        createBarrier(0f, Blocks.VIRTUAL_HEIGHT - 27/64f,0, 0, Blocks.VIRTUAL_WIDTH,0, true, true);
-        // bottom barrier
-        createBarrier(0, 0, 0, 27/64f, Blocks.VIRTUAL_WIDTH, 27/64f, true, true);
-        // left barrier
-        createBarrier(0, 0, 27/64f, 0, 27/64f, Blocks.VIRTUAL_WIDTH, false, true);
-        // rigth barrier
-        createBarrier(Blocks.VIRTUAL_WIDTH - 27f/64f, 0f, 0, 0, 0, Blocks.VIRTUAL_WIDTH, false, true);
-        // middle barrier
-        createBarrier(Blocks.VIRTUAL_WIDTH / 2f - 27f/64f/2, 0f, 0, 0, 0, Blocks.VIRTUAL_WIDTH, false, true);
-        createBarrier(Blocks.VIRTUAL_WIDTH / 2f + 27f/64f/2, 0f, 0, 0, 0, Blocks.VIRTUAL_WIDTH, false, false);
-
-        InputResponeSystem irs = new InputResponeSystem(viewport);
-        Gdx.input.setInputProcessor(new GestureDetector(new GestureListener(irs)));
-        engine.addSystem(irs);
-
-        engine.addSystem(new Box2dDebugSystem(world, viewport.getCamera()));
     }
 
     private void createBarrier(float x, float y, float x1, float y1, float x2, float y2, boolean horizontal, boolean visible)
