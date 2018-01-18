@@ -13,17 +13,16 @@ import pl.moonwolf.blocks.screens.MainScreen;
 public class Blocks extends Game
 {
     private SpriteBatch batch;
-    private Viewport viewport;
     public static final float VIRTUAL_HEIGHT = 10;
     public static final float VIRTUAL_WIDTH = 10;
 
     @Override
     public void create ()
     {
-        viewport = new ExtendViewport(800, 600);
-        ((OrthographicCamera) this.viewport.getCamera()).setToOrtho(false, Blocks.VIRTUAL_WIDTH, Blocks.VIRTUAL_HEIGHT);
+        Viewport viewport = new ExtendViewport(800, 600);
+        ((OrthographicCamera) viewport.getCamera()).setToOrtho(false, Blocks.VIRTUAL_WIDTH, Blocks.VIRTUAL_HEIGHT);
         batch = new SpriteBatch();
-        batch.setProjectionMatrix(((OrthographicCamera) this.viewport.getCamera()).combined);
+        batch.setProjectionMatrix(((OrthographicCamera) viewport.getCamera()).combined);
         setScreen(new MainScreen(batch, viewport));
     }
 
