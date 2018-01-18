@@ -5,14 +5,19 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -36,6 +41,7 @@ public class MainScreen extends ScreenAdapter
     private PooledEngine engine;
     private TextureComponent tc;
     private TextureComponent floor;
+    private Sound blipSound;
 
     @Override
     public void resize(int width, int height)
@@ -48,6 +54,7 @@ public class MainScreen extends ScreenAdapter
     {
         this.batch = batch;
         this.viewport = viewport;
+        blipSound = Gdx.audio.newSound(Gdx.files.internal("sounds/blip.wav"));
         tc = new TextureComponent();
         tc.texture = new Texture("stone.png");
         tc.size = tc.texture.getWidth() / 64f; // 64 pixels is 1 meter
@@ -57,6 +64,26 @@ public class MainScreen extends ScreenAdapter
         engine = new PooledEngine();
         engine.addSystem(new RenderSystem(batch, viewport.getCamera()));
         world = new World(new Vector2(0f, 0f), true);
+        world.setContactListener(new ContactListener()
+        {
+            @Override
+            public void beginContact(Contact contact)
+            {
+                blipSound.play();
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {
+            }
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {
+            }
+        });
         World.setVelocityThreshold(0f);
         engine.addSystem(new Box2dSystem(world));
         float x = 0;
@@ -73,7 +100,7 @@ public class MainScreen extends ScreenAdapter
             x = 0;
             y += floor.size;
         }
-        createPlayer(0.5f);
+        createPlayer(1f);
         createPlayer(7.5f);
 
         // upper barrier
@@ -107,7 +134,7 @@ public class MainScreen extends ScreenAdapter
         bodyDef.type = BodyDef.BodyType.DynamicBody;
 
         // Set our body's starting position in the world
-        bodyDef.position.set(x, 0.5f);
+        bodyDef.position.set(x, 1f);
 
         bodyDef.angularDamping = 0f;
         bodyDef.linearDamping = 0f;
