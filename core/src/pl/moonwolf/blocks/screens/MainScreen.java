@@ -1,5 +1,6 @@
 package pl.moonwolf.blocks.screens;
 
+import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
@@ -111,13 +112,16 @@ public class MainScreen extends ScreenAdapter
         engine.addEntity(block);
 
         // upper barrier
-        createBarrier(0f, Blocks.VIRTUAL_HEIGHT / 2f,0, 0, Blocks.VIRTUAL_WIDTH,0, true);
+        createBarrier(0f, Blocks.VIRTUAL_HEIGHT - 27/64f,0, 0, Blocks.VIRTUAL_WIDTH,0, true, true);
         // bottom barrier
-        createBarrier(0, 0, 0, 27/64f, Blocks.VIRTUAL_WIDTH, 27/64f, true);
+        createBarrier(0, 0, 0, 27/64f, Blocks.VIRTUAL_WIDTH, 27/64f, true, true);
         // left barrier
-        createBarrier(0, 0, 27/64f, 0, 27/64f, Blocks.VIRTUAL_WIDTH / 2, false);
+        createBarrier(0, 0, 27/64f, 0, 27/64f, Blocks.VIRTUAL_WIDTH, false, true);
         // rigth barrier
-        createBarrier(Blocks.VIRTUAL_WIDTH - 27f/64f, 0f, 0, 0, 0, Blocks.VIRTUAL_WIDTH / 2, false);
+        createBarrier(Blocks.VIRTUAL_WIDTH - 27f/64f, 0f, 0, 0, 0, Blocks.VIRTUAL_WIDTH, false, true);
+        // middle barrier
+        createBarrier(Blocks.VIRTUAL_WIDTH / 2f - 27f/64f/2, 0f, 0, 0, 0, Blocks.VIRTUAL_WIDTH, false, true);
+        createBarrier(Blocks.VIRTUAL_WIDTH / 2f + 27f/64f/2, 0f, 0, 0, 0, Blocks.VIRTUAL_WIDTH, false, false);
 
         InputResponeSystem irs = new InputResponeSystem();
         Gdx.input.setInputProcessor(new GestureDetector(new GestureListener(irs)));
@@ -126,7 +130,7 @@ public class MainScreen extends ScreenAdapter
         engine.addSystem(new Box2dDebugSystem(world, viewport.getCamera()));
     }
 
-    private void createBarrier(float x, float y, float x1, float y1, float x2, float y2, boolean horizontal)
+    private void createBarrier(float x, float y, float x1, float y1, float x2, float y2, boolean horizontal, boolean visible)
     {
         BodyDef bodyDef = new BodyDef();
         BodyComponent bc = new BodyComponent();
@@ -145,7 +149,12 @@ public class MainScreen extends ScreenAdapter
         {
             length = y2 - y1;
         }
-        entity.add(new PositionComponent()).add(bc).add(new MultiTexturesComponent(new Texture("hedge.png"), 27f/64f, (int) (length / (27f/64f)) + 1, horizontal));
+        entity.add(new PositionComponent()).add(bc);
+        if (visible)
+        {
+            Component representation = new MultiTexturesComponent(new Texture("hedge.png"), 27f / 64f, (int) (length / (27f / 64f)) + 1, horizontal);
+            entity.add(representation);
+        }
         engine.addEntity(entity);
     }
 
