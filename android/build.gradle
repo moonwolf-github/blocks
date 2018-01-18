@@ -28,6 +28,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            manifestPlaceholders = [applicationLabel: "@string/app_name"]
+        }
+        debug {
+            applicationIdSuffix ".debug"
+            manifestPlaceholders = [applicationLabel: "Blocks - debug"]
         }
     }
 }
