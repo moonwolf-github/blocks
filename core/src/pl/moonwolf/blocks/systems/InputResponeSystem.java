@@ -20,7 +20,7 @@ public class InputResponeSystem extends IteratingSystem implements InputHandler
     private float vX;
     private float vY;
     private ComponentMapper<BodyComponent> bm = ComponentMapper.getFor(BodyComponent.class);
-    Vector2 linearVelocity;
+    private Vector2 linearVelocity;
     private float x;
     private Viewport viewport;
 
