@@ -9,6 +9,7 @@ import pl.moonwolf.blocks.systems.InputResponeSystem;
 public class GestureListener implements GestureDetector.GestureListener
 {
     private InputResponeSystem listener;
+    private float touchX;
 
     public GestureListener(InputResponeSystem listener)
     {
@@ -19,6 +20,7 @@ public class GestureListener implements GestureDetector.GestureListener
     public boolean touchDown(float x, float y, int pointer, int button)
     {
         Gdx.app.log("Gesture", "touchDown");
+        touchX = x;
         return false;
     }
 
@@ -39,8 +41,8 @@ public class GestureListener implements GestureDetector.GestureListener
     @Override
     public boolean fling(float velocityX, float velocityY, int button)
     {
-        Gdx.app.log("Gesture", String.format("fling - vX: %.2f, vY: %.2f, button: %d", velocityX, velocityY, button));
-        listener.setVelocities(velocityX, velocityY);
+        Gdx.app.log("Gesture", String.format("fling - x: %.2f, vX: %.2f, vY: %.2f, button: %d", touchX, velocityX, velocityY, button));
+        listener.setVelocities(touchX, velocityX, velocityY);
         return true;
     }
 

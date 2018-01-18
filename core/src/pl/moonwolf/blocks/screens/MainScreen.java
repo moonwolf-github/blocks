@@ -123,7 +123,7 @@ public class MainScreen extends ScreenAdapter
         createBarrier(Blocks.VIRTUAL_WIDTH / 2f - 27f/64f/2, 0f, 0, 0, 0, Blocks.VIRTUAL_WIDTH, false, true);
         createBarrier(Blocks.VIRTUAL_WIDTH / 2f + 27f/64f/2, 0f, 0, 0, 0, Blocks.VIRTUAL_WIDTH, false, false);
 
-        InputResponeSystem irs = new InputResponeSystem();
+        InputResponeSystem irs = new InputResponeSystem(viewport);
         Gdx.input.setInputProcessor(new GestureDetector(new GestureListener(irs)));
         engine.addSystem(irs);
 
