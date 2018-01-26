@@ -44,6 +44,7 @@ public class MainScreen extends ScreenAdapter
     private TextureComponent floor;
     private Sound blipSound;
     private Music backgroundMusic;
+    private TextureComponent enemyTexture;
 
     @Override
     public void resize(int width, int height)
@@ -61,6 +62,9 @@ public class MainScreen extends ScreenAdapter
         backgroundMusic.setVolume(0.4f);
         backgroundMusic.play();
         blipSound = Gdx.audio.newSound(Gdx.files.internal("sounds/blip.wav"));
+        enemyTexture = new TextureComponent();
+        enemyTexture.texture = new Texture("enemy01.png");
+        enemyTexture.size = enemyTexture.texture.getWidth() / 64f; // 64 pixels is 1 meter
         tc = new TextureComponent();
         tc.texture = new Texture("stone.png");
         tc.size = tc.texture.getWidth() / 64f; // 64 pixels is 1 meter
@@ -108,6 +112,7 @@ public class MainScreen extends ScreenAdapter
         }
         createPlayer(1f);
         createPlayer(7.5f);
+        createEnemy(4f, 8f);
 
         // upper barrier
         createBarrier(0f, Blocks.VIRTUAL_HEIGHT - 27/64f,0, 0, Blocks.VIRTUAL_WIDTH,0, true, true);
@@ -126,6 +131,46 @@ public class MainScreen extends ScreenAdapter
         engine.addSystem(irs);
 
         engine.addSystem(new Box2dDebugSystem(world, viewport.getCamera()));
+    }
+
+    private void createEnemy(float x, float y)
+    {
+        Entity entity = engine.createEntity();
+        entity.add(enemyTexture);
+        entity.add(new PositionComponent());
+        BodyComponent bc = new BodyComponent();
+        BodyDef bodyDef = new BodyDef();
+        // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+
+        // Set our body's starting position in the world
+        bodyDef.position.set(x, y);
+
+        /*bodyDef.angularDamping = 0f;
+        bodyDef.linearDamping = 0f;*/
+
+        // Create our body in the world using our body definition
+        bc.body = world.createBody(bodyDef);
+
+        // Create a circle shape and set its radius to 6
+        CircleShape circle = new CircleShape();
+        circle.setRadius(enemyTexture.texture.getWidth() / 2f / 64f);
+
+        // Create a fixture definition to apply our shape to
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = circle;
+        fixtureDef.density = 5f;
+        fixtureDef.friction = 0.0f;
+        fixtureDef.restitution = 1.0f; // perfectly elastic collision
+
+        // Create our fixture and attach it to the body
+        bc.body.createFixture(fixtureDef);
+
+        // Remember to dispose of any shapes after you're done with them!
+        // BodyDef and FixtureDef don't need disposing, but shapes do.
+        circle.dispose();
+        entity.add(bc);
+        engine.addEntity(entity);
     }
 
     private void createPlayer(float x)
@@ -213,5 +258,6 @@ public class MainScreen extends ScreenAdapter
         world.dispose();
         backgroundMusic.dispose();
         blipSound.dispose();
+        enemyTexture.texture.dispose();
     }
 }
