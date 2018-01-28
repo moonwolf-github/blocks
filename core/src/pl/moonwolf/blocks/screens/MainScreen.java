@@ -20,6 +20,7 @@ import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import pl.moonwolf.blocks.Blocks;
@@ -45,6 +46,9 @@ public class MainScreen extends ScreenAdapter
     private Sound blipSound;
     private Music backgroundMusic;
     private TextureComponent enemyTexture;
+    private Entity player1; // or array maybe?
+    private Entity enemy; // array probably
+    private Array<Entity> destroyedEntities;
 
     @Override
     public void resize(int width, int height)
@@ -57,6 +61,7 @@ public class MainScreen extends ScreenAdapter
     {
         this.batch = batch;
         this.viewport = viewport;
+        destroyedEntities = new Array<Entity>();
         backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/music.mp3"));
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(0.4f);
@@ -79,6 +84,16 @@ public class MainScreen extends ScreenAdapter
             @Override
             public void beginContact(Contact contact)
             {
+                if (
+                        (contact.getFixtureA().getBody() == player1.getComponent(BodyComponent.class).body &&
+                         contact.getFixtureB().getBody() == enemy.getComponent(BodyComponent.class).body) ||
+                        (contact.getFixtureB().getBody() == player1.getComponent(BodyComponent.class).body &&
+                         contact.getFixtureA().getBody() == enemy.getComponent(BodyComponent.class).body)
+                   )
+                {
+                    destroyedEntities.add(player1);
+                    destroyedEntities.add(enemy);
+                }
                 blipSound.play();
             }
 
@@ -110,9 +125,9 @@ public class MainScreen extends ScreenAdapter
             x = 0;
             y += floor.size;
         }
-        createPlayer(1f);
+        player1 = createPlayer(1f);
         createPlayer(7.5f);
-        createEnemy(4f, 8f, new Vector2(-.05f, -.005f));
+        enemy = createEnemy(4f, 8f, new Vector2(-.05f, -.005f));
 
         // upper barrier
         createBarrier(0f, Blocks.VIRTUAL_HEIGHT - 27/64f,0, 0, Blocks.VIRTUAL_WIDTH,0, true, true);
@@ -133,7 +148,7 @@ public class MainScreen extends ScreenAdapter
         engine.addSystem(new Box2dDebugSystem(world, viewport.getCamera()));
     }
 
-    private void createEnemy(float x, float y, Vector2 linearVelocity)
+    private Entity createEnemy(float x, float y, Vector2 linearVelocity)
     {
         Entity entity = engine.createEntity();
         entity.add(enemyTexture);
@@ -173,9 +188,10 @@ public class MainScreen extends ScreenAdapter
         engine.addEntity(entity);
 
         bc.body.applyLinearImpulse(linearVelocity, bc.body.getWorldCenter(), true);
+        return entity;
     }
 
-    private void createPlayer(float x)
+    private Entity createPlayer(float x)
     {
         Entity block = engine.createEntity();
         block.add(tc);
@@ -214,6 +230,7 @@ public class MainScreen extends ScreenAdapter
         circle.dispose();
         block.add(bc);
         engine.addEntity(block);
+        return block;
     }
 
     private void createBarrier(float x, float y, float x1, float y1, float x2, float y2, boolean horizontal, boolean visible)
@@ -249,6 +266,12 @@ public class MainScreen extends ScreenAdapter
     {
         super.render(delta);
         engine.update(delta);
+        for (Entity entity : destroyedEntities)
+        {
+            world.destroyBody(entity.getComponent(BodyComponent.class).body);
+            engine.removeEntity(entity);
+        }
+        destroyedEntities.clear();
     }
 
     @Override
