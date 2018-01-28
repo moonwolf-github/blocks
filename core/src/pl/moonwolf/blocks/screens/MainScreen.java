@@ -112,7 +112,7 @@ public class MainScreen extends ScreenAdapter
         }
         createPlayer(1f);
         createPlayer(7.5f);
-        createEnemy(4f, 8f);
+        createEnemy(4f, 8f, new Vector2(-.05f, -.005f));
 
         // upper barrier
         createBarrier(0f, Blocks.VIRTUAL_HEIGHT - 27/64f,0, 0, Blocks.VIRTUAL_WIDTH,0, true, true);
@@ -133,7 +133,7 @@ public class MainScreen extends ScreenAdapter
         engine.addSystem(new Box2dDebugSystem(world, viewport.getCamera()));
     }
 
-    private void createEnemy(float x, float y)
+    private void createEnemy(float x, float y, Vector2 linearVelocity)
     {
         Entity entity = engine.createEntity();
         entity.add(enemyTexture);
@@ -171,6 +171,8 @@ public class MainScreen extends ScreenAdapter
         circle.dispose();
         entity.add(bc);
         engine.addEntity(entity);
+
+        bc.body.applyLinearImpulse(linearVelocity, bc.body.getWorldCenter(), true);
     }
 
     private void createPlayer(float x)
