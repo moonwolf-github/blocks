@@ -10,6 +10,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -22,6 +23,8 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
+
+import java.util.Random;
 
 import pl.moonwolf.blocks.Blocks;
 import pl.moonwolf.blocks.components.MultiTexturesComponent;
@@ -127,7 +130,7 @@ public class MainScreen extends ScreenAdapter
         }
         player1 = createPlayer(1f);
         createPlayer(7.5f);
-        enemy = createEnemy(4f, 8f, new Vector2(-.05f, -.005f));
+        enemy = createEnemy(4f, 8f);
 
         // upper barrier
         createBarrier(0f, Blocks.VIRTUAL_HEIGHT - 27/64f,0, 0, Blocks.VIRTUAL_WIDTH,0, true, true);
@@ -148,8 +151,10 @@ public class MainScreen extends ScreenAdapter
         engine.addSystem(new Box2dDebugSystem(world, viewport.getCamera()));
     }
 
-    private Entity createEnemy(float x, float y, Vector2 linearVelocity)
+    private Entity createEnemy(float x, float y)
     {
+        Vector2 linearVelocity = new Vector2(MathUtils.random(-0.05f, 0.05f),
+                -MathUtils.random(0.002f, 0.01f));
         Entity entity = engine.createEntity();
         entity.add(enemyTexture);
         entity.add(new PositionComponent());
