@@ -24,8 +24,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import java.util.Random;
-
 import pl.moonwolf.blocks.Blocks;
 import pl.moonwolf.blocks.components.MultiTexturesComponent;
 import pl.moonwolf.blocks.components.PlayerComponent;
@@ -47,6 +45,7 @@ public class MainScreen extends ScreenAdapter
     private TextureComponent tc;
     private TextureComponent floor;
     private Sound blipSound;
+    private Sound explosionSound;
     private Music backgroundMusic;
     private TextureComponent enemyTexture;
     private Entity player1; // or array maybe?
@@ -71,6 +70,7 @@ public class MainScreen extends ScreenAdapter
         backgroundMusic.setVolume(0.4f);
         backgroundMusic.play();
         blipSound = Gdx.audio.newSound(Gdx.files.internal("sounds/blip.wav"));
+        explosionSound = Gdx.audio.newSound(Gdx.files.internal("sounds/explosion.wav"));
         enemyTexture = new TextureComponent();
         enemyTexture.texture = new Texture("enemy01.png");
         enemyTexture.size = enemyTexture.texture.getWidth() / 64f; // 64 pixels is 1 meter
@@ -98,8 +98,12 @@ public class MainScreen extends ScreenAdapter
                     destroyedEntities.add(player1);
                     destroyedEntities.add(enemy);
                     spawnEnemy = true;
+                    explosionSound.play();
                 }
-                blipSound.play();
+                else
+                {
+                    blipSound.play();
+                }
             }
 
             @Override
@@ -297,5 +301,6 @@ public class MainScreen extends ScreenAdapter
         backgroundMusic.dispose();
         blipSound.dispose();
         enemyTexture.texture.dispose();
+        explosionSound.dispose();
     }
 }
