@@ -52,6 +52,7 @@ public class MainScreen extends ScreenAdapter
     private Entity player1; // or array maybe?
     private Entity enemy; // array probably
     private Array<Entity> destroyedEntities;
+    private boolean spawnEnemy;
 
     @Override
     public void resize(int width, int height)
@@ -96,6 +97,7 @@ public class MainScreen extends ScreenAdapter
                 {
                     destroyedEntities.add(player1);
                     destroyedEntities.add(enemy);
+                    spawnEnemy = true;
                 }
                 blipSound.play();
             }
@@ -275,6 +277,12 @@ public class MainScreen extends ScreenAdapter
         {
             world.destroyBody(entity.getComponent(BodyComponent.class).body);
             engine.removeEntity(entity);
+        }
+        if (spawnEnemy)
+        {
+            spawnEnemy = false;
+            enemy = createEnemy(MathUtils.random(4f) + .5f, 8.5f);
+            player1 = createPlayer(1f);
         }
         destroyedEntities.clear();
     }
