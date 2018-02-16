@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import pl.moonwolf.blocks.Blocks;
+import pl.moonwolf.blocks.components.CounterComponent;
 import pl.moonwolf.blocks.components.MultiTexturesComponent;
 import pl.moonwolf.blocks.components.PlayerComponent;
 import pl.moonwolf.blocks.input.GestureListener;
@@ -35,6 +36,7 @@ import pl.moonwolf.blocks.systems.Box2dDebugSystem;
 import pl.moonwolf.blocks.systems.Box2dSystem;
 import pl.moonwolf.blocks.systems.InputResponeSystem;
 import pl.moonwolf.blocks.systems.RenderSystem;
+import pl.moonwolf.blocks.systems.TimerSystem;
 
 public class MainScreen extends ScreenAdapter
 {
@@ -155,6 +157,7 @@ public class MainScreen extends ScreenAdapter
         engine.addSystem(irs);
 
         engine.addSystem(new Box2dDebugSystem(world, viewport.getCamera()));
+        engine.addSystem(new TimerSystem());
     }
 
     private Entity createEnemy(float x, float y)
@@ -196,6 +199,7 @@ public class MainScreen extends ScreenAdapter
         // BodyDef and FixtureDef don't need disposing, but shapes do.
         circle.dispose();
         entity.add(bc);
+        entity.add(new CounterComponent());
         engine.addEntity(entity);
 
         bc.body.applyLinearImpulse(linearVelocity, bc.body.getWorldCenter(), true);
