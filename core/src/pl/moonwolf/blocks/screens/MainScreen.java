@@ -44,7 +44,6 @@ public class MainScreen extends ScreenAdapter
 {
     private final Viewport viewport;
     private final World world;
-    private final SpriteBatch batch;
     private PooledEngine engine;
     private TextureComponent tc;
     private TextureComponent floor;
@@ -66,7 +65,6 @@ public class MainScreen extends ScreenAdapter
 
     public MainScreen(SpriteBatch batch, Viewport viewport, SpriteBatch textBatch, BitmapFont textFont)
     {
-        this.batch = batch;
         this.viewport = viewport;
         destroyedEntities = new Array<Entity>();
         backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/music.mp3"));
