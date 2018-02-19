@@ -6,23 +6,29 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.Locale;
+import java.util.Vector;
 
 import pl.moonwolf.blocks.components.CounterComponent;
+import pl.moonwolf.blocks.components.PositionComponent;
+import pl.moonwolf.blocks.components.ValueComponent;
 
 public class TextRenderSystem extends IteratingSystem
 {
     private final SpriteBatch batch;
-    private final ComponentMapper<CounterComponent> counter;
+    private final ComponentMapper<ValueComponent> value;
+    private final ComponentMapper<PositionComponent> pos;
     private final BitmapFont font;
 
     public TextRenderSystem(SpriteBatch batch, BitmapFont font)
     {
-        super(Family.all(CounterComponent.class).get());
+        super(Family.all(ValueComponent.class, PositionComponent.class).get());
         this.batch = batch;
         this.font = font;
-        counter = ComponentMapper.getFor(CounterComponent.class);
+        value = ComponentMapper.getFor(ValueComponent.class);
+        pos = ComponentMapper.getFor(PositionComponent.class);
     }
 
     @Override
@@ -36,6 +42,8 @@ public class TextRenderSystem extends IteratingSystem
     @Override
     protected void processEntity(Entity entity, float deltaTime)
     {
-        font.draw(batch, String.format(Locale.US, "%.2f", counter.get(entity).time), 10, 64 * 9 + 30);
+        Vector2 pos = this.pos.get(entity).pos;
+        int val = value.get(entity).value;
+        font.draw(batch, String.format(Locale.US, "%d", val), pos.x, pos.y);
     }
 }

@@ -29,6 +29,8 @@ import pl.moonwolf.blocks.Blocks;
 import pl.moonwolf.blocks.components.CounterComponent;
 import pl.moonwolf.blocks.components.MultiTexturesComponent;
 import pl.moonwolf.blocks.components.PlayerComponent;
+import pl.moonwolf.blocks.components.SpeedComponent;
+import pl.moonwolf.blocks.components.ValueComponent;
 import pl.moonwolf.blocks.input.GestureListener;
 import pl.moonwolf.blocks.components.BodyComponent;
 import pl.moonwolf.blocks.components.PositionComponent;
@@ -55,6 +57,7 @@ public class MainScreen extends ScreenAdapter
     private Entity enemy; // array probably
     private Array<Entity> destroyedEntities;
     private boolean spawnEnemy;
+    private Entity score;
 
     @Override
     public void resize(int width, int height)
@@ -100,6 +103,29 @@ public class MainScreen extends ScreenAdapter
                     destroyedEntities.add(player1);
                     destroyedEntities.add(enemy);
                     spawnEnemy = true;
+                    Gdx.app.log("counter", String.valueOf(enemy.getComponent(CounterComponent.class).time));
+                    Gdx.app.log("speed", String.valueOf(enemy.getComponent(SpeedComponent.class).speed));
+                    float counter = enemy.getComponent(CounterComponent.class).time;
+                    float speed = enemy.getComponent(SpeedComponent.class).speed * 10;
+                    int val = 0;
+                    if (counter <= 2)
+                    {
+                        val = (int) (100 * speed);
+                    }
+                    else
+                    {
+                        if (counter >= 10)
+                        {
+                            val = 0;
+                        }
+                        else
+                        {
+                            Gdx.app.log("function", String.valueOf((((100f / (8 * 8)) * ((counter - 10) * (counter - 10))))));
+                            val = (int) (((100f / (8 * 8)) * ((counter - 10) * (counter - 10))) * speed);
+                        }
+                    }
+                    score.getComponent(ValueComponent.class).value += val;
+                    Gdx.app.log("score", String.valueOf(score));
                     explosionSound.play();
                 }
                 else
@@ -152,6 +178,11 @@ public class MainScreen extends ScreenAdapter
         createBarrier(Blocks.VIRTUAL_WIDTH / 2f - 27f/64f/2, 0f, 0, 0, 0, Blocks.VIRTUAL_WIDTH, false, true);
         createBarrier(Blocks.VIRTUAL_WIDTH / 2f + 27f/64f/2, 0f, 0, 0, 0, Blocks.VIRTUAL_WIDTH, false, false);
 
+        score = engine.createEntity();
+        score.add(new PositionComponent(10, 64 * 9 + 30));
+        score.add(new ValueComponent());
+        engine.addEntity(score);
+
         InputResponeSystem irs = new InputResponeSystem(viewport);
         Gdx.input.setInputProcessor(new GestureDetector(new GestureListener(irs)));
         engine.addSystem(irs);
@@ -165,9 +196,11 @@ public class MainScreen extends ScreenAdapter
     {
         Vector2 linearVelocity = new Vector2(MathUtils.random(-0.05f, 0.05f),
                 -MathUtils.random(0.002f, 0.01f));
+        Gdx.app.log("velocity", String.format("%.6f", linearVelocity.len()));
         Entity entity = engine.createEntity();
         entity.add(enemyTexture);
         entity.add(new PositionComponent());
+        entity.add(new SpeedComponent(linearVelocity.len()));
         BodyComponent bc = new BodyComponent();
         BodyDef bodyDef = new BodyDef();
         // We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
