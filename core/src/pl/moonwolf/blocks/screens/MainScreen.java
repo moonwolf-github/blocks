@@ -8,6 +8,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
@@ -36,6 +37,7 @@ import pl.moonwolf.blocks.systems.Box2dDebugSystem;
 import pl.moonwolf.blocks.systems.Box2dSystem;
 import pl.moonwolf.blocks.systems.InputResponeSystem;
 import pl.moonwolf.blocks.systems.RenderSystem;
+import pl.moonwolf.blocks.systems.TextRenderSystem;
 import pl.moonwolf.blocks.systems.TimerSystem;
 
 public class MainScreen extends ScreenAdapter
@@ -62,7 +64,7 @@ public class MainScreen extends ScreenAdapter
         viewport.update(width, height);
     }
 
-    public MainScreen(SpriteBatch batch, Viewport viewport)
+    public MainScreen(SpriteBatch batch, Viewport viewport, SpriteBatch textBatch, BitmapFont textFont)
     {
         this.batch = batch;
         this.viewport = viewport;
@@ -158,6 +160,7 @@ public class MainScreen extends ScreenAdapter
 
         engine.addSystem(new Box2dDebugSystem(world, viewport.getCamera()));
         engine.addSystem(new TimerSystem());
+        engine.addSystem(new TextRenderSystem(textBatch, textFont));
     }
 
     private Entity createEnemy(float x, float y)

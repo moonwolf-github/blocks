@@ -23,6 +23,6 @@ public class TimerSystem extends IteratingSystem
     protected void processEntity(Entity entity, float deltaTime)
     {
         counter.get(entity).time += deltaTime;
-        Gdx.app.log("counter", String.valueOf(counter.get(entity).time));
+        //Gdx.app.log("counter", String.valueOf(counter.get(entity).time));
     }
 }
