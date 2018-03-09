@@ -7,11 +7,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -23,8 +26,11 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
 import pl.moonwolf.blocks.Blocks;
 import pl.moonwolf.blocks.components.CounterComponent;
 import pl.moonwolf.blocks.components.MultiTexturesComponent;
@@ -46,6 +52,8 @@ public class MainScreen extends ScreenAdapter
 {
     private final Viewport viewport;
     private final World world;
+    private final RayHandler rayHandler;
+    private PointLight pointLight;
     private PooledEngine engine;
     private TextureComponent tc;
     private TextureComponent floor;
@@ -58,6 +66,8 @@ public class MainScreen extends ScreenAdapter
     private Array<Entity> destroyedEntities;
     private boolean spawnEnemy;
     private Entity score;
+    private boolean explode;
+    private float explodeStart;
 
     @Override
     public void resize(int width, int height)
@@ -66,7 +76,7 @@ public class MainScreen extends ScreenAdapter
         viewport.update(width, height);
     }
 
-    public MainScreen(SpriteBatch batch, Viewport viewport, SpriteBatch textBatch, BitmapFont textFont)
+    public MainScreen(SpriteBatch batch, final Viewport viewport, SpriteBatch textBatch, BitmapFont textFont)
     {
         this.viewport = viewport;
         destroyedEntities = new Array<Entity>();
@@ -126,7 +136,15 @@ public class MainScreen extends ScreenAdapter
                     }
                     score.getComponent(ValueComponent.class).value += val;
                     Gdx.app.log("score", String.valueOf(score));
+                    Gdx.app.log("X", String.valueOf(enemy.getComponent(PositionComponent.class).pos.x));
+                    pointLight = new PointLight(rayHandler, 6,
+                            new Color(1,.4f,0.1f,1),
+                            1,
+                            (-viewport.getScreenWidth() / 2f) + (enemy.getComponent(PositionComponent.class).pos.x / Blocks.VIRTUAL_WIDTH) * viewport.getScreenWidth(),
+                            (-viewport.getScreenHeight() / 2f) + (enemy.getComponent(PositionComponent.class).pos.y / Blocks.VIRTUAL_HEIGHT) * viewport.getScreenHeight());
                     explosionSound.play();
+                    explode = true;
+                    explodeStart = 0;
                 }
                 else
                 {
@@ -190,6 +208,10 @@ public class MainScreen extends ScreenAdapter
         engine.addSystem(new Box2dDebugSystem(world, viewport.getCamera()));
         engine.addSystem(new TimerSystem());
         engine.addSystem(new TextRenderSystem(textBatch, textFont));
+
+        rayHandler = new RayHandler(world);
+        rayHandler.setAmbientLight(.0f, .0f, .0f, 1);
+        //rayHandler.setBlurNum(3);
     }
 
     private Entity createEnemy(float x, float y)
@@ -327,6 +349,18 @@ public class MainScreen extends ScreenAdapter
             player1 = createPlayer(1f);
         }
         destroyedEntities.clear();
+        if (explode)
+        {
+            pointLight.setDistance(300 * MathUtils.sinDeg(explodeStart));
+            explodeStart += delta * 150;
+            Gdx.app.log("explode", String.valueOf(explodeStart));
+            if (explodeStart >= 300 * 3/4f)
+            {
+                explode = false;
+            }
+        }
+        rayHandler.setCombinedMatrix((OrthographicCamera) viewport.getCamera());
+        rayHandler.updateAndRender();
     }
 
     @Override
@@ -340,5 +374,7 @@ public class MainScreen extends ScreenAdapter
         blipSound.dispose();
         enemyTexture.texture.dispose();
         explosionSound.dispose();
+        rayHandler.dispose();
+        pointLight.dispose();
     }
 }
