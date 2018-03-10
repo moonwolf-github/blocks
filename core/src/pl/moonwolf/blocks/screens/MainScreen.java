@@ -33,6 +33,7 @@ import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import pl.moonwolf.blocks.Blocks;
 import pl.moonwolf.blocks.components.CounterComponent;
+import pl.moonwolf.blocks.components.ExplosionComponent;
 import pl.moonwolf.blocks.components.MultiTexturesComponent;
 import pl.moonwolf.blocks.components.PlayerComponent;
 import pl.moonwolf.blocks.components.SpeedComponent;
@@ -43,6 +44,7 @@ import pl.moonwolf.blocks.components.PositionComponent;
 import pl.moonwolf.blocks.components.TextureComponent;
 import pl.moonwolf.blocks.systems.Box2dDebugSystem;
 import pl.moonwolf.blocks.systems.Box2dSystem;
+import pl.moonwolf.blocks.systems.ExplosionSystem;
 import pl.moonwolf.blocks.systems.InputResponeSystem;
 import pl.moonwolf.blocks.systems.RenderSystem;
 import pl.moonwolf.blocks.systems.TextRenderSystem;
@@ -66,8 +68,6 @@ public class MainScreen extends ScreenAdapter
     private Array<Entity> destroyedEntities;
     private boolean spawnEnemy;
     private Entity score;
-    private boolean explode;
-    private float explodeStart;
 
     @Override
     public void resize(int width, int height)
@@ -142,9 +142,8 @@ public class MainScreen extends ScreenAdapter
                             1,
                             (-viewport.getScreenWidth() / 2f) + (enemy.getComponent(PositionComponent.class).pos.x / Blocks.VIRTUAL_WIDTH) * viewport.getScreenWidth(),
                             (-viewport.getScreenHeight() / 2f) + (enemy.getComponent(PositionComponent.class).pos.y / Blocks.VIRTUAL_HEIGHT) * viewport.getScreenHeight());
+                    engine.addEntity(engine.createEntity().add(new ExplosionComponent(pointLight)));
                     explosionSound.play();
-                    explode = true;
-                    explodeStart = 0;
                 }
                 else
                 {
@@ -208,6 +207,7 @@ public class MainScreen extends ScreenAdapter
         engine.addSystem(new Box2dDebugSystem(world, viewport.getCamera()));
         engine.addSystem(new TimerSystem());
         engine.addSystem(new TextRenderSystem(textBatch, textFont));
+        engine.addSystem(new ExplosionSystem(engine));
 
         rayHandler = new RayHandler(world);
         rayHandler.setAmbientLight(.0f, .0f, .0f, 1);
@@ -349,16 +349,6 @@ public class MainScreen extends ScreenAdapter
             player1 = createPlayer(1f);
         }
         destroyedEntities.clear();
-        if (explode)
-        {
-            pointLight.setDistance(300 * MathUtils.sinDeg(explodeStart));
-            explodeStart += delta * 150;
-            Gdx.app.log("explode", String.valueOf(explodeStart));
-            if (explodeStart >= 300 * 3/4f)
-            {
-                explode = false;
-            }
-        }
         rayHandler.setCombinedMatrix((OrthographicCamera) viewport.getCamera());
         rayHandler.updateAndRender();
     }
