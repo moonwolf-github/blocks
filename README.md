@@ -4,7 +4,7 @@ and [box2d](http://box2d.org/)
 
 It's strictly for testing purposes - i want to test ECS approach with libgdx. So don't expect much progress here.
 
-All assets and some code are taken shamelessly from various sources. Here are some credits:
+Some code and all assets were taken shamelessly from various sources.
 
 * [input system](https://stackoverflow.com/questions/38278201/libgdx-ashley-how-do-i-control-a-player-the-proper-way-ecs-framework)
 * [assets](https://opengameart.org/content/2d-lost-garden-zelda-style-tiles-resized-to-32x32-with-additions)
