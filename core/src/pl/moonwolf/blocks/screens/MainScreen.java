@@ -14,7 +14,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -26,12 +25,12 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import pl.moonwolf.blocks.Blocks;
+import pl.moonwolf.blocks.ExplosionLight;
 import pl.moonwolf.blocks.components.CounterComponent;
 import pl.moonwolf.blocks.components.ExplosionComponent;
 import pl.moonwolf.blocks.components.MultiTexturesComponent;
@@ -55,7 +54,6 @@ public class MainScreen extends ScreenAdapter
     private final Viewport viewport;
     private final World world;
     private final RayHandler rayHandler;
-    private PointLight pointLight;
     private PooledEngine engine;
     private TextureComponent tc;
     private TextureComponent floor;
@@ -68,6 +66,15 @@ public class MainScreen extends ScreenAdapter
     private Array<Entity> destroyedEntities;
     private boolean spawnEnemy;
     private Entity score;
+    private ExplosionLight explosionLight;
+    private Pool<ExplosionLight> explosionLights = new Pool<ExplosionLight>()
+    {
+        @Override
+        protected ExplosionLight newObject()
+        {
+            return new ExplosionLight();
+        }
+    };
 
     @Override
     public void resize(int width, int height)
@@ -117,7 +124,7 @@ public class MainScreen extends ScreenAdapter
                     Gdx.app.log("speed", String.valueOf(enemy.getComponent(SpeedComponent.class).speed));
                     float counter = enemy.getComponent(CounterComponent.class).time;
                     float speed = enemy.getComponent(SpeedComponent.class).speed * 10;
-                    int val = 0;
+                    int val;
                     if (counter <= 2)
                     {
                         val = (int) (100 * speed);
@@ -137,12 +144,11 @@ public class MainScreen extends ScreenAdapter
                     score.getComponent(ValueComponent.class).value += val;
                     Gdx.app.log("score", String.valueOf(score));
                     Gdx.app.log("X", String.valueOf(enemy.getComponent(PositionComponent.class).pos.x));
-                    pointLight = new PointLight(rayHandler, 6,
-                            new Color(1,.4f,0.1f,1),
-                            1,
+                    explosionLight = explosionLights.obtain();
+                    explosionLight.setParams(rayHandler,
                             (-viewport.getScreenWidth() / 2f) + (enemy.getComponent(PositionComponent.class).pos.x / Blocks.VIRTUAL_WIDTH) * viewport.getScreenWidth(),
                             (-viewport.getScreenHeight() / 2f) + (enemy.getComponent(PositionComponent.class).pos.y / Blocks.VIRTUAL_HEIGHT) * viewport.getScreenHeight());
-                    engine.addEntity(engine.createEntity().add(new ExplosionComponent(pointLight)));
+                    engine.addEntity(engine.createEntity().add(new ExplosionComponent(explosionLight)));
                     explosionSound.play();
                 }
                 else
@@ -365,6 +371,5 @@ public class MainScreen extends ScreenAdapter
         enemyTexture.texture.dispose();
         explosionSound.dispose();
         rayHandler.dispose();
-        pointLight.dispose();
     }
 }

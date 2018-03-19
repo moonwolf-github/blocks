@@ -2,14 +2,14 @@ package pl.moonwolf.blocks.components;
 
 import com.badlogic.ashley.core.Component;
 
-import box2dLight.PointLight;
+import pl.moonwolf.blocks.ExplosionLight;
 
 public class ExplosionComponent implements Component
 {
     public float percent = 0;
-    public PointLight light;
+    public ExplosionLight light;
 
-    public ExplosionComponent(PointLight light)
+    public ExplosionComponent(ExplosionLight light)
     {
         this.light = light;
     }
