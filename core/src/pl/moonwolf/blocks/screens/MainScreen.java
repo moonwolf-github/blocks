@@ -7,7 +7,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -64,7 +63,7 @@ public class MainScreen extends ScreenAdapter
     private Entity player1; // or array maybe?
     private Array<Entity> enemies;
     private Array<Entity> destroyedEntities;
-    private boolean spawnEnemy;
+    private boolean spawnPlayer;
     private Entity score;
     private ExplosionLight explosionLight;
     private Pool<ExplosionLight> explosionLights = new Pool<ExplosionLight>()
@@ -75,6 +74,7 @@ public class MainScreen extends ScreenAdapter
             return new ExplosionLight();
         }
     };
+    private float spawnEnemyCounter = 6;
 
     @Override
     public void resize(int width, int height)
@@ -125,7 +125,7 @@ public class MainScreen extends ScreenAdapter
                     {
                         destroyedEntities.add(player1);
                         destroyedEntities.add(enemy);
-                        spawnEnemy = true;
+                        spawnPlayer = true;
                         Gdx.app.log("counter", String.valueOf(enemy.getComponent(CounterComponent.class).time));
                         Gdx.app.log("speed", String.valueOf(enemy.getComponent(SpeedComponent.class).speed));
                         float counter = enemy.getComponent(CounterComponent.class).time;
@@ -358,13 +358,18 @@ public class MainScreen extends ScreenAdapter
             engine.removeEntity(entity);
             Gdx.app.log("destroy", String.valueOf(enemies.size));
         }
-        if (spawnEnemy)
+        if (spawnPlayer)
         {
-            spawnEnemy = false;
-            enemies.add(createEnemy(MathUtils.random(4f) + .5f, 8.5f));
+            spawnPlayer = false;
             player1 = createPlayer(1f);
         }
         destroyedEntities.clear();
+        spawnEnemyCounter -= delta;
+        if (spawnEnemyCounter < 0)
+        {
+            spawnEnemyCounter = 5;
+            enemies.add(createEnemy(MathUtils.random(4f) + .5f, 8.5f));
+        }
         rayHandler.setCombinedMatrix((OrthographicCamera) viewport.getCamera());
         rayHandler.updateAndRender();
     }
