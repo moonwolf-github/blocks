@@ -62,7 +62,7 @@ public class MainScreen extends ScreenAdapter
     private Music backgroundMusic;
     private TextureComponent enemyTexture;
     private Entity player1; // or array maybe?
-    private Entity enemy; // array probably
+    private Array<Entity> enemies;
     private Array<Entity> destroyedEntities;
     private boolean spawnEnemy;
     private Entity score;
@@ -82,6 +82,15 @@ public class MainScreen extends ScreenAdapter
         super.resize(width, height);
         viewport.update(width, height);
     }
+
+    private boolean isCollision(Contact contact, Entity entity1, Entity entity2)
+    {
+        return (contact.getFixtureA().getBody() == entity1.getComponent(BodyComponent.class).body &&
+                contact.getFixtureB().getBody() == entity2.getComponent(BodyComponent.class).body) ||
+               (contact.getFixtureB().getBody() == entity1.getComponent(BodyComponent.class).body &&
+                contact.getFixtureA().getBody() == entity2.getComponent(BodyComponent.class).body);
+    }
+
 
     public MainScreen(SpriteBatch batch, final Viewport viewport, SpriteBatch textBatch, BitmapFont textFont)
     {
@@ -110,50 +119,48 @@ public class MainScreen extends ScreenAdapter
             @Override
             public void beginContact(Contact contact)
             {
-                if (
-                        (contact.getFixtureA().getBody() == player1.getComponent(BodyComponent.class).body &&
-                         contact.getFixtureB().getBody() == enemy.getComponent(BodyComponent.class).body) ||
-                        (contact.getFixtureB().getBody() == player1.getComponent(BodyComponent.class).body &&
-                         contact.getFixtureA().getBody() == enemy.getComponent(BodyComponent.class).body)
-                   )
+                for (Entity enemy: enemies)
                 {
-                    destroyedEntities.add(player1);
-                    destroyedEntities.add(enemy);
-                    spawnEnemy = true;
-                    Gdx.app.log("counter", String.valueOf(enemy.getComponent(CounterComponent.class).time));
-                    Gdx.app.log("speed", String.valueOf(enemy.getComponent(SpeedComponent.class).speed));
-                    float counter = enemy.getComponent(CounterComponent.class).time;
-                    float speed = enemy.getComponent(SpeedComponent.class).speed * 10;
-                    int val;
-                    if (counter <= 2)
+                    if (isCollision(contact, player1, enemy))
                     {
-                        val = (int) (100 * speed);
-                    }
-                    else
-                    {
-                        if (counter >= 10)
+                        destroyedEntities.add(player1);
+                        destroyedEntities.add(enemy);
+                        spawnEnemy = true;
+                        Gdx.app.log("counter", String.valueOf(enemy.getComponent(CounterComponent.class).time));
+                        Gdx.app.log("speed", String.valueOf(enemy.getComponent(SpeedComponent.class).speed));
+                        float counter = enemy.getComponent(CounterComponent.class).time;
+                        float speed = enemy.getComponent(SpeedComponent.class).speed * 10;
+                        int val;
+                        if (counter <= 2)
                         {
-                            val = 0;
+                            val = (int) (100 * speed);
                         }
                         else
                         {
-                            Gdx.app.log("function", String.valueOf((((100f / (8 * 8)) * ((counter - 10) * (counter - 10))))));
-                            val = (int) (((100f / (8 * 8)) * ((counter - 10) * (counter - 10))) * speed);
+                            if (counter >= 10)
+                            {
+                                val = 0;
+                            }
+                            else
+                            {
+                                Gdx.app.log("function", String.valueOf((((100f / (8 * 8)) * ((counter - 10) * (counter - 10))))));
+                                val = (int) (((100f / (8 * 8)) * ((counter - 10) * (counter - 10))) * speed);
+                            }
                         }
+                        score.getComponent(ValueComponent.class).value += val;
+                        Gdx.app.log("score", String.valueOf(score));
+                        Gdx.app.log("X", String.valueOf(enemy.getComponent(PositionComponent.class).pos.x));
+                        explosionLight = explosionLights.obtain();
+                        explosionLight.setParams(rayHandler,
+                                (-viewport.getScreenWidth() / 2f) + (enemy.getComponent(PositionComponent.class).pos.x / Blocks.VIRTUAL_WIDTH) * viewport.getScreenWidth(),
+                                (-viewport.getScreenHeight() / 2f) + (enemy.getComponent(PositionComponent.class).pos.y / Blocks.VIRTUAL_HEIGHT) * viewport.getScreenHeight());
+                        engine.addEntity(engine.createEntity().add(new ExplosionComponent(explosionLight)));
+                        explosionSound.play();
                     }
-                    score.getComponent(ValueComponent.class).value += val;
-                    Gdx.app.log("score", String.valueOf(score));
-                    Gdx.app.log("X", String.valueOf(enemy.getComponent(PositionComponent.class).pos.x));
-                    explosionLight = explosionLights.obtain();
-                    explosionLight.setParams(rayHandler,
-                            (-viewport.getScreenWidth() / 2f) + (enemy.getComponent(PositionComponent.class).pos.x / Blocks.VIRTUAL_WIDTH) * viewport.getScreenWidth(),
-                            (-viewport.getScreenHeight() / 2f) + (enemy.getComponent(PositionComponent.class).pos.y / Blocks.VIRTUAL_HEIGHT) * viewport.getScreenHeight());
-                    engine.addEntity(engine.createEntity().add(new ExplosionComponent(explosionLight)));
-                    explosionSound.play();
-                }
-                else
-                {
-                    blipSound.play();
+                    else
+                    {
+                        blipSound.play();
+                    }
                 }
             }
 
@@ -187,7 +194,8 @@ public class MainScreen extends ScreenAdapter
         }
         player1 = createPlayer(1f);
         createPlayer(7.5f);
-        enemy = createEnemy(4f, 8f);
+        enemies = new Array<Entity>();
+        enemies.add(createEnemy(4f, 8f));
 
         // upper barrier
         createBarrier(0f, Blocks.VIRTUAL_HEIGHT - 27/64f,0, 0, Blocks.VIRTUAL_WIDTH,0, true, true);
@@ -346,12 +354,14 @@ public class MainScreen extends ScreenAdapter
         for (Entity entity : destroyedEntities)
         {
             world.destroyBody(entity.getComponent(BodyComponent.class).body);
+            enemies.removeValue(entity, true);
             engine.removeEntity(entity);
+            Gdx.app.log("destroy", String.valueOf(enemies.size));
         }
         if (spawnEnemy)
         {
             spawnEnemy = false;
-            enemy = createEnemy(MathUtils.random(4f) + .5f, 8.5f);
+            enemies.add(createEnemy(MathUtils.random(4f) + .5f, 8.5f));
             player1 = createPlayer(1f);
         }
         destroyedEntities.clear();
