@@ -119,6 +119,11 @@ public class MainScreen extends ScreenAdapter
             @Override
             public void beginContact(Contact contact)
             {
+                if (enemies.size == 0)
+                {
+                    blipSound.play();
+                }
+
                 for (Entity enemy: enemies)
                 {
                     if (isCollision(contact, player1, enemy))
