@@ -11,8 +11,7 @@ buildscript {
         classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6'
         classpath 'com.android.tools.build:gradle:2.3.0'
         classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.1'
-        
-
+        classpath 'org.multi-os-engine:moe-gradle:1.4.0'
     }
 }
 
@@ -123,6 +122,20 @@ project(":core") {
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
         compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         
+    }
+}
+
+project(":ios-moe") {
+    apply plugin: "moe"
+
+    configurations { natives }
+
+    dependencies {
+        compile project(":core")
+        compile "com.badlogicgames.gdx:gdx-backend-moe:$gdxVersion"
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"
+        natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-ios"
+
     }
 }
 
